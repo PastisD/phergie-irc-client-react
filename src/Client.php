@@ -36,6 +36,11 @@ class Client extends EventEmitter implements
     LoopAccessorInterface
 {
     /**
+     * @var WriteStream[]
+     */
+    static protected $writes = [];
+
+    /**
      * Event loop
      *
      * @var \React\EventLoop\LoopInterface
@@ -371,9 +376,12 @@ class Client extends EventEmitter implements
      */
     protected function getWriteStream(ConnectionInterface $connection)
     {
-        $write = new WriteStream();
-        $this->addLogging($write, $connection);
-        return $write;
+        $hash = spl_object_hash($connection);
+        if(empty(self::$writes[$hash])) {
+            self::$writes[$hash] = new WriteStream();
+            $this->addLogging(self::$writes[$hash], $connection);
+        }
+        return self::$writes[$hash];
     }
 
     /**
@@ -631,7 +639,7 @@ class Client extends EventEmitter implements
             ->then(
                 function(DuplexStreamInterface $stream) use ($connection) {
                     $this->initializeStream($stream, $connection);
-                    $this->emit('connect.after.each', array($connection, $connection->getOption('write')));
+                    $this->emit('connect.after.each', array($connection, $this->getWriteStream($connection)));
                 }
             );
     }
@@ -673,7 +681,7 @@ class Client extends EventEmitter implements
             $this->emitConnectionError($e, $connection);
         }
 
-        $this->emit('connect.after.each', array($connection, $connection->getOption('write')));
+        $this->emit('connect.after.each', array($connection, $this->getWriteStream($connection)));
     }
 
     /**
@@ -721,9 +729,10 @@ class Client extends EventEmitter implements
             $this->addConnection($connection);
         }
 
+        $_instance = $this;
         $writes = array_map(
-            function($connection) {
-                return $connection->getOption('write');
+            function($connection) use ($_instance) {
+                return $_instance->getWriteStream($connection);
             },
             $connections
         );
