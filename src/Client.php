@@ -748,10 +748,10 @@ class Client extends EventEmitter implements
      * passed. Proxies to addTimer() implementation of the event loop
      * implementation returned by getLoop().
      *
-     * @param numeric $interval Number of seconds to wait before executing
+     * @param int $interval Number of seconds to wait before executing
      *        callback
      * @param callable $callback Callback to execute
-     * @return \React\Event\Timer\TimerInterface Added timer
+     * @return \React\EventLoop\Timer\TimerInterface Added timer
      */
     public function addTimer($interval, $callback)
     {
@@ -763,9 +763,9 @@ class Client extends EventEmitter implements
      * addPeriodTimer() implementation of the event loop implementation
      * returned by getLoop().
      *
-     * @param numeric $interval Number of seconds to wait between executions of callback
+     * @param int $interval Number of seconds to wait between executions of callback
      * @param callable $callback Callback to execute
-     * @return \React\Event\Timer\TimerInterface Added timer
+     * @return \React\EventLoop\Timer\TimerInterface Added timer
      */
     public function addPeriodicTimer($interval, $callback)
     {
@@ -777,7 +777,7 @@ class Client extends EventEmitter implements
      * addPeriodicTimer(). Proxies to the cancelTimer() implementation of the
      * event loop implementation returned by getLoop().
      *
-     * @param \React\Event\Timer\TimerInterface $timer Timer returned by
+     * @param \React\EventLoop\Timer\TimerInterface $timer Timer returned by
      *        addTimer() or addPeriodicTimer()
      */
     public function cancelTimer(TimerInterface $timer)
@@ -790,7 +790,7 @@ class Client extends EventEmitter implements
      * active. Proxies to the isTimerActive() implementation of the event loop
      * implementation returned by getLoop().
      *
-     * @param \React\Event\Timer\TimerInterface $timer Timer returned by
+     * @param \React\EventLoop\Timer\TimerInterface $timer Timer returned by
      *        addTimer() or addPeriodicTimer()
      * @return boolean TRUE if the specified timer is active, FALSE otherwise
      */
